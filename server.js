@@ -42,10 +42,21 @@ app.use(express.static(path.join(__dirname,'public')))
 //routes
 app.use('/api',route);
 
+
 //testing server
-app.get('/',function(req,res){
-    res.send("hello world");
+/*app.get('/',function(req,res){
+    res.render(__dirname+"/src/index.html");
 })
+
+app.set('view engine', 'ejs');
+
+app.engine('html', require('ejs').renderFile)
+*/
+app.get('*',function (req, res) {
+    res.res('index.html');
+});
+
+/*app.set('views',__dirname+'/client/src');*/
 
 app.listen(port,function(){
     console.log("server started at port "+port)
