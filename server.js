@@ -1,63 +1,41 @@
-var express= require ('express');
-var app=express();
-var ejs=require("ejs");
-var fs=require("fs");
-var mongoose=require("mongoose");
-var bodyparser=require("body-parser");
-var cors = require('cors');
-var path = require('path');
+// Get dependencies
+const express = require('express');
+const path = require('path');
+const http = require('http');
+const bodyParser = require('body-parser');
 
-//route
-const route=require('./routes/route')
+// Get our API routes
+const api = require('./server/routes/api/app');
 
-//port
-const port = 3000;
+const app = express();
 
-/*
-//mongo connection
-mongoose.connect('mongodb://localhost:27017/contactlist');
+// Parsers for POST data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-//on connection
-mongoose.connection.on('connected',function(){
-    console.log('connected to db 27017');
-})
+// Point static path to dist
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
-//on connection error
-mongoose.connection.on('error',function(err){
-  if(err){
-    console.log('error connection db '+err);
-  }
-})
-*/
+// Set our api routes
+app.use('/api', api);
 
-//middleware
-app.use(cors());
-
-//bodyparser
-app.use(bodyparser.json())
-
-//static files
-app.use(express.static(path.join(__dirname,'public')))
-
-//routes
-app.use('/api',route);
-
-
-//testing server
-/*app.get('/',function(req,res){
-    res.render(__dirname+"/src/index.html");
-})
-
-app.set('view engine', 'ejs');
-
-app.engine('html', require('ejs').renderFile)
-*/
-app.get('*',function (req, res) {
-    res.res('index.html');
+// Catch all other routes and return the index file
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
 
-/*app.set('views',__dirname+'/client/src');*/
+/**
+ * Get port from environment and store in Express.
+ */
+const port = process.env.PORT || '3000';
+app.set('port', port);
 
-app.listen(port,function(){
-    console.log("server started at port "+port)
-})
+/**
+ * Create HTTP server.
+ */
+const server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+server.listen(port, () => console.log(`API running on localhost:${port}`));
