@@ -58,6 +58,8 @@ npm-debug.log
 
 # Doc #
 /doc/
+*.doc
+*.docx
 
 # IDE #
 .idea/
